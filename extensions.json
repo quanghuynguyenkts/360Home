@@ -1,0 +1,13 @@
+{
+    "builtin": "False",
+    "type": "extension",
+    "rocket_mode_compatible": "False",
+    "name": "360Home",
+    "description": "Extensions for PyRevit",
+    "author": "huynq",
+    "author_profile": "https://github.com/quanghuynguyenkts",
+    "url": "https://github.com/quanghuynguyenkts/360Home.git",
+    "website": "https://github.com/quanghuynguyenkts",
+    "image": "",
+    "dependencies": []
+}
