@@ -56,12 +56,8 @@ if file:
 
     trans.Start()
     binding = doc.Application.Create.NewInstanceBinding(catSet)
-    for definition in listSelectedDefinition:
-        doc.ParameterBindings.Insert(definition, binding, BuiltInParameterGroup.PG_DATA)
-=======
     for definition in myDefinitions:
         doc.ParameterBindings.Insert(definition, binding, BuiltInParameterGroup.PG_IDENTITY_DATA)
->>>>>>> 1a2e518b73b0cdd6904e10ef2add82fc9cfff3a1
     trans.Commit()
 
 
