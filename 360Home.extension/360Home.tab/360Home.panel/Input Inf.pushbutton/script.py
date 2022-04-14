@@ -41,7 +41,7 @@ if file:
     trans.Start()
     binding = doc.Application.Create.NewInstanceBinding(catSet)
     for definition in myDefinitions:
-        doc.ParameterBindings.Insert(definition, binding, BuiltInParameterGroup.PG_DATA)
+        doc.ParameterBindings.Insert(definition, binding, BuiltInParameterGroup.PG_IDENTITY_DATA)
     trans.Commit()
 #     print(dicta)
 #     # group = myGroups("1_Thong-tin-chung")
