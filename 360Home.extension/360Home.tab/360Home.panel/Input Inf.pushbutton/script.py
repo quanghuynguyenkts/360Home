@@ -1,5 +1,6 @@
 from Autodesk.Revit.DB import Transaction, BuiltInParameterGroup,Category,BuiltInCategory
 
+from pyrevit import forms
 
 # Get UIDocument
 uidoc = __revit__.ActiveUIDocument
@@ -10,6 +11,9 @@ doc = uidoc.Document
 # Get Application
 app = doc.Application
 
+# items = ['item1', 'item2', 'item3']
+#result  = forms.SelectFromList.show(items, button_name='Select Item',multiselect = True)
+
 file = app.OpenSharedParameterFile()
 if file:
     myGroups = file.Groups
@@ -17,15 +21,27 @@ if file:
     myDefinitions = []
     for a in myGroups:
         dicta[a.Name] = [b.Name for b in a.Definitions]
-        group = myGroups[a.Name]
-        for b in group.Definitions:
+        # group = myGroups[a.Name]
+        # for b in group.Definitions:
            
-            definition = group.Definitions[b.Name]
-            # print(definition)
-            # print(b.Name)
-            myDefinitions.append(definition)
-    
+        #     definition = group.Definitions[b.Name]
+        #     # print(definition)
+        #     # print(b.Name)
+        #     myDefinitions.append(definition)
+        # #print(myDefinitions)
+        # defName = []
+        # for e in myDefinitions:
+        #     defName.append(e.Name)
 
+    result  = forms.SelectFromList.show(dicta, button_name='Select Item',multiselect = True)
+
+    # result => string
+
+    listSelectedDefinition = []
+    for b in myDefinitions:
+        if b.Name in result:
+            listSelectedDefinition.append(b)
+    
     categories = []
 
     categories.append(Category.GetCategory(doc,BuiltInCategory.OST_ProjectInformation))
@@ -40,9 +56,14 @@ if file:
 
     trans.Start()
     binding = doc.Application.Create.NewInstanceBinding(catSet)
-    for definition in myDefinitions:
+    for definition in listSelectedDefinition:
         doc.ParameterBindings.Insert(definition, binding, BuiltInParameterGroup.PG_DATA)
     trans.Commit()
+
+
+
+
+
 #     print(dicta)
 #     # group = myGroups("1_Thong-tin-chung")
 #     group = myGroups["0_Thong-tin-chung"]
