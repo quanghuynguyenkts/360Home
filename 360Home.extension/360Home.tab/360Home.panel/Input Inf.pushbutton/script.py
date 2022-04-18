@@ -21,14 +21,12 @@ if file:
     myDefinitions = []
     for a in myGroups:
         dicta[a.Name] = [b.Name for b in a.Definitions]
+        for b in a.Definitions:
+            myDefinitions.append(b)
         # group = myGroups[a.Name]
         # for b in group.Definitions:
-           
         #     definition = group.Definitions[b.Name]
-        #     # print(definition)
-        #     # print(b.Name)
         #     myDefinitions.append(definition)
-        # #print(myDefinitions)
         # defName = []
         # for e in myDefinitions:
         #     defName.append(e.Name)
@@ -38,27 +36,29 @@ if file:
     # result => string
 
     listSelectedDefinition = []
-    for b in myDefinitions:
-        if b.Name in result:
-            listSelectedDefinition.append(b)
+    if result:
+
+        for b in myDefinitions:
+            if b.Name in result:
+                listSelectedDefinition.append(b)
     
-    categories = []
+        categories = []
 
-    categories.append(Category.GetCategory(doc,BuiltInCategory.OST_ProjectInformation))
+        categories.append(Category.GetCategory(doc,BuiltInCategory.OST_ProjectInformation))
 
-    catSet = doc.Application.Create.NewCategorySet()
-    for cat in categories:
+        catSet = doc.Application.Create.NewCategorySet()
+        for cat in categories:
 
-        if cat.AllowsBoundParameters:
-            catSet.Insert(cat)
+            if cat.AllowsBoundParameters:
+                catSet.Insert(cat)
 
-    trans = Transaction(doc, "Create Project Information Parameter")
+        trans = Transaction(doc, "Create Project Information Parameter")
 
-    trans.Start()
-    binding = doc.Application.Create.NewInstanceBinding(catSet)
-    for definition in myDefinitions:
-        doc.ParameterBindings.Insert(definition, binding, BuiltInParameterGroup.PG_IDENTITY_DATA)
-    trans.Commit()
+        trans.Start()
+        binding = doc.Application.Create.NewInstanceBinding(catSet)
+        for definition in listSelectedDefinition:
+            doc.ParameterBindings.Insert(definition, binding, BuiltInParameterGroup.PG_IDENTITY_DATA)
+        trans.Commit()
 
 
 
