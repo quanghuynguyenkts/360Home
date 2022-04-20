@@ -2,7 +2,6 @@ from Autodesk.Revit.DB import Transaction, BuiltInParameterGroup,Category,BuiltI
 
 from pyrevit import forms
 
-# Get UIDocument
 uidoc = __revit__.ActiveUIDocument
 
 # Get Document 
@@ -14,8 +13,10 @@ app = doc.Application
 # items = ['item1', 'item2', 'item3']
 #result  = forms.SelectFromList.show(items, button_name='Select Item',multiselect = True)
 
-file = app.OpenSharedParameterFile()
-if file:
+def run():
+    file = app.OpenSharedParameterFile()
+    if not file:
+        return
     myGroups = file.Groups
     dicta={}
     myDefinitions = []
@@ -32,51 +33,58 @@ if file:
         #     defName.append(e.Name)
 
     result  = forms.SelectFromList.show(dicta, button_name='Select Parameters',multiselect = True)
-
+    if not result:
+        return
     # result => string
 
     listSelectedDefinition = []
-    if result:
-
-        for b in myDefinitions:
-            if b.Name in result:
-                listSelectedDefinition.append(b)
     
 
-        categories = doc.Settings.Categories
+    for b in myDefinitions:
+        if b.Name in result:
+            listSelectedDefinition.append(b)
+    
 
-        myCategories = []
+    categories = doc.Settings.Categories
+
+    myCategories = []
         # for c in categories:
         #     myCategories.Add(c.Name, c)
 
-        for c in categories:
-            if c.AllowsBoundParameters:   
-                myCategories.append(c.Name)
-        sortedCategories = sorted(myCategories)
+    for c in categories:
+        if c.AllowsBoundParameters:   
+            myCategories.append(c.Name)
+    sortedCategories = sorted(myCategories)
         
-        result2  = forms.SelectFromList.show(sortedCategories, button_name='Select Categories',multiselect = True)
-        selectedCategories = []
-        for d in categories:
-            if d.Name in result2:
-                selectedCategories.append(d)
+    result2  = forms.SelectFromList.show(sortedCategories, button_name='Select Categories',multiselect = True)
+    if not result2:
+        return
+    selectedCategories = []
+        
+    for d in categories:
+        if d.Name in result2:
+            selectedCategories.append(d)
 
-        # categories = []
+    # categories = []
 
-        # categories.append(Category.GetCategory(doc,BuiltInCategory.OST_ProjectInformation))
+    # categories.append(Category.GetCategory(doc,BuiltInCategory.OST_ProjectInformation))
 
-        catSet = doc.Application.Create.NewCategorySet()
-        for cat in selectedCategories:
+    catSet = doc.Application.Create.NewCategorySet()
+    for cat in selectedCategories:
 
             # if cat.AllowsBoundParameters:
-            catSet.Insert(cat)
+        catSet.Insert(cat)
 
-        trans = Transaction(doc, "Create Project Information Parameter")
+    trans = Transaction(doc, "Create Project Information Parameter")
 
-        trans.Start()
-        binding = doc.Application.Create.NewInstanceBinding(catSet)
-        for definition in listSelectedDefinition:
-            doc.ParameterBindings.Insert(definition, binding, BuiltInParameterGroup.PG_IDENTITY_DATA)
-        trans.Commit()
+    trans.Start()
+    binding = doc.Application.Create.NewInstanceBinding(catSet)
+    for definition in listSelectedDefinition:
+        doc.ParameterBindings.Insert(definition, binding, BuiltInParameterGroup.PG_IDENTITY_DATA)
+    trans.Commit()
+
+run()
+
 
 
 
